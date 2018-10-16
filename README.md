@@ -1,1 +1,1 @@
-# vr_schneeballschlacht
+# VR_Schneeballschlacht / VR_Snowball War
