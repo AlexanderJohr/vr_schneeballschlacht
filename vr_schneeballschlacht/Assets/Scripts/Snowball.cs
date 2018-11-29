@@ -24,11 +24,11 @@ public class Snowball : Creature {
 	private Vector3 centerPosition;
 	private Vector3 leftPosition;
 	private Vector3 rightPosition;
-	private float width;
-	private float height;
+    private SphereCollider myCollider;
+    public float rotateRay;
 
-	// is this snowball actual a cover
-	private bool isCover;
+    // is this snowball actual a cover
+    private bool isCover;
 	// should a cover but is in air
 	private bool checkSnowball;
 	// the rigidbody from this snowball
@@ -37,15 +37,16 @@ public class Snowball : Creature {
 	// Use this for initialization
 	void Start () {
 		rb = GetComponent<Rigidbody> ();
-		// Get the width of this snowball
-		width = transform.localScale.x;
-		// Get the hight of this snowball
-		height =  (transform.localScale.y /2) * 1.1f ;
-	}
+        myCollider = GetComponent<SphereCollider>();
+        rotateRay = 45;
+    }
 	
 	// Update is called once per frame
 	void Update () {
-		
+        if (refCenter == null && (refLeft == null || refRight == null))
+        {
+            ExpandCover();
+        }
 	}
 
 	void FixedUpdate(){
@@ -91,23 +92,23 @@ public class Snowball : Creature {
 	}
 
 	void LookForSphere(){
-		Vector3 directionX = new Vector3(width/2,0,0);
-		Vector3 directionY = Vector3.down * height/2;
+        float height = myCollider.radius + 0.1f;
 		centerPosition = transform.position;
-		leftPosition = centerPosition - directionX + directionY;
-		rightPosition = centerPosition + directionX + directionY;
+        Vector3 centerDirection = Vector3.down * height;
+        Vector3 leftDirection = Quaternion.AngleAxis(-rotateRay, Vector3.forward) * centerDirection;
+        Vector3 rightDirection = Quaternion.AngleAxis(rotateRay, Vector3.forward) * centerDirection;
 
-		Debug.DrawRay(centerPosition,Vector3.down * height,Color.blue);
-		Debug.DrawRay(centerPosition,leftPosition - centerPosition,Color.red);
-		Debug.DrawRay(centerPosition,rightPosition - centerPosition,Color.green);
+        Debug.DrawRay(centerPosition, centerDirection, Color.blue);
+        Debug.DrawRay(centerPosition, leftDirection, Color.red);
+        Debug.DrawRay(centerPosition, rightDirection, Color.green);
 
 		RaycastHit hit;
-		if (Physics.Raycast (centerPosition, Vector3.down * height, out hit, height)) {
+		if (Physics.Raycast (centerPosition, centerDirection, out hit, height)) {
 			refCenter = hit.collider.gameObject;
 			GroundCover ();
-		} else if (Physics.Raycast (centerPosition, leftPosition - centerPosition, out hit, height)) {
+		} else if (Physics.Raycast (centerPosition, leftDirection, out hit, height)) {
 			refLeft = hit.collider.gameObject;
-			if (Physics.Raycast (centerPosition, rightPosition - centerPosition, out hit, height)) {
+			if (Physics.Raycast (centerPosition, rightDirection, out hit, height)) {
 				refRight = hit.collider.gameObject;
 				GroundCover ();
 			} else {
@@ -143,7 +144,6 @@ public class Snowball : Creature {
 	}
 
 	void GroundCover(){
-		rb.Sleep ();
 		rb.isKinematic = true;
 		rb.constraints = RigidbodyConstraints.FreezeAll;
 		isCover = true;
@@ -151,6 +151,9 @@ public class Snowball : Creature {
 	}
 
 	void ExpandCover(){
-		checkSnowball = true; 
+        rb.isKinematic = false;
+        rb.constraints = RigidbodyConstraints.None;
+        isCover = false;
+        checkSnowball = true; 
 	}
 }
