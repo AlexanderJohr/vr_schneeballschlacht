@@ -1,7 +1,14 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class Snowball2 : MonoBehaviour
 {
+    public Snowball2()
+    {
+        ConnectedBalls = new List<Snowball2>();
+    }
+
     BallCollection ballCollection = BallCollection.Instance;
 
     public bool isHeldInHand;
@@ -63,6 +70,9 @@ public class Snowball2 : MonoBehaviour
         }
     }
     public bool IsNotHeldInHand { get { return !IsHeldInHand; } }
+
+    public bool IsConnectedToGround { get; set; }
+    public List<Snowball2> ConnectedBalls { get; set; }
 
     void Start()
     {
@@ -152,5 +162,11 @@ public class Snowball2 : MonoBehaviour
         if (shouldFallDown) {
             this.IsCover = false;
         }
+    }
+
+    public void reset()
+    {
+        IsConnectedToGround = false;
+        ConnectedBalls.Clear();
     }
 }
