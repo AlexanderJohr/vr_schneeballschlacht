@@ -21,6 +21,7 @@ public class Hand : MonoBehaviour
             if (value != null)
             {
                 ballInHand = value;
+                BallInHand.IsHeldInHand = true;
                 ballInHand.gameObject.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                 ballInHand.gameObject.transform.position = attachPoint.transform.position;
 
@@ -34,7 +35,7 @@ public class Hand : MonoBehaviour
                     Object.DestroyImmediate(joint);
                     joint = null;
                 }
-                BallInHand.IsHoldedInHand = false;
+                BallInHand.IsHeldInHand = false;
                 ballInHand = null;
             }
 
@@ -162,7 +163,7 @@ public class Hand : MonoBehaviour
     {
         var go = GameObject.Instantiate(prefab);
         BallInHand = go.GetComponent<Snowball2>();
-        BallInHand.IsHoldedInHand = true;
+        BallInHand.IsHeldInHand = true;
 
     }
 }

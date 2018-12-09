@@ -4,8 +4,8 @@ public class Snowball2 : MonoBehaviour
 {
     BallCollection ballCollection = BallCollection.Instance;
 
-
-
+    public bool isHeldInHand;
+    public bool IsBall { get { return !IsCover; } }
     public bool IsCover
     {
         get
@@ -47,12 +47,25 @@ public class Snowball2 : MonoBehaviour
             this.transform.localScale = new Vector3(value, value, value);
         }
     }
-    public bool IsHoldedInHand { get; set; }
-    public bool IsNotHoldedInHand { get { return !IsHoldedInHand; } }
+    public bool IsHeldInHand
+    {
+        get
+        {
+            return isHeldInHand;
+        }
+        set
+        {
+            if (value == false)
+            {
+                print("");
+            }
+            isHeldInHand = value;
+        }
+    }
+    public bool IsNotHeldInHand { get { return !IsHeldInHand; } }
 
     void Start()
     {
-        IsHoldedInHand = false;
         ballCollection.Balls.Add(this);
         Rigidbody = GetComponent<Rigidbody>();
     }
@@ -67,44 +80,65 @@ public class Snowball2 : MonoBehaviour
     {
 
 
-        HandleCollisionWithOtherBalls();
-
+        HandleCollisions();
+     
     }
-
-    private void HandleCollisionWithOtherBalls()
+    private void HandleCollisions()
     {
-        if (!this.IsCover)
+        float distanceOfCenterToGround = this.transform.position.y - 0.2f;
+
+        float ballRadius = this.Scale / 2;
+
+        float mergeWithFloorThreshold = ballRadius * BallCollection.snowballMergeThresholdMultiplier;
+
+        float snowballMergeRadius = ballRadius - mergeWithFloorThreshold;
+        float distanceOfMergeRadiusToGround = distanceOfCenterToGround - snowballMergeRadius;
+
+        bool isCloseToFloor = distanceOfMergeRadiusToGround < 0;
+
+        if (this.IsBall && IsNotHeldInHand && isCloseToFloor)
+        {
+            this.IsCover = true;
+            return;
+        }
+
+        bool isAtLeastCloseToOneOtherBall = false;
+        for (int i = 0; i < ballCollection.Balls.Count; i++)
         {
 
-            for (int i = 0; i < ballCollection.Balls.Count; i++)
+            var otherBall = ballCollection.Balls[i];
+            var isntThisBall = this != otherBall;
+
+            if (isntThisBall)
             {
-                var otherBall = ballCollection.Balls[i];
-                var isntThisBall = this != otherBall;
 
-                if (isntThisBall)
+                bool ballsAreNotHeldInHand = this.IsNotHeldInHand && otherBall.IsNotHeldInHand;
+
+                if (ballsAreNotHeldInHand)
                 {
-
-                    bool ballsAreNotHoldedInHands = this.IsNotHoldedInHand && otherBall.IsNotHoldedInHand;
-                    bool atLeastOneBallIsCover = this.IsCover || otherBall.IsCover;
-
-                    if (ballsAreNotHoldedInHands && atLeastOneBallIsCover && otherBall.IsCover)
+                    bool ballsAreCloseToEachOther = BallCollection.checkIfBallsAreCloseToEachOther(this, otherBall);
+                    if (ballsAreCloseToEachOther)
                     {
-                        bool ballsAreCloseToEachOther = BallCollection.checkIfBallsAreCloseToEachOther(this, otherBall);
-                        if (ballsAreCloseToEachOther)
-                        {
-                            bool velocityIsHigh = this.Rigidbody.velocity.magnitude > 6;
-                            if (velocityIsHigh)
-                            {
-                                ballCollection.Balls.Remove(otherBall);
-                                Object.Destroy(otherBall.gameObject);
-                                ballCollection.Balls.Remove(this);
-                                Object.Destroy(this.gameObject);
+                        isAtLeastCloseToOneOtherBall = true;
 
-                            }
-                            else
+                        bool velocityIsHigh = this.Rigidbody.velocity.magnitude > 6;
+                        if (velocityIsHigh)
+                        {
+                            ballCollection.Balls.Remove(otherBall);
+                            Object.Destroy(otherBall.gameObject);
+                            ballCollection.Balls.Remove(this);
+                            Object.Destroy(this.gameObject);
+                        }
+                        else
+                        {
+                            if (this.IsBall || otherBall.IsCover)
                             {
                                 this.IsCover = true;
-
+                                break;
+                            }
+                            else if (this.IsCover || otherBall.IsCover)
+                            {
+                                break;
                             }
                         }
                     }
@@ -112,6 +146,11 @@ public class Snowball2 : MonoBehaviour
             }
         }
 
-
+        bool isNotCloseToAnyOtherBall = !isAtLeastCloseToOneOtherBall;
+        bool isNotCloseToFloor = !isCloseToFloor;
+        bool shouldFallDown = this.IsCover && isNotCloseToAnyOtherBall && isNotCloseToFloor;
+        if (shouldFallDown) {
+            this.IsCover = false;
+        }
     }
 }
