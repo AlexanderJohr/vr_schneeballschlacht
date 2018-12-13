@@ -2,29 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public sealed class BallCollection
+public sealed class BallCollection : MonoBehaviour
 {
-    #region singleton   
-    private static readonly BallCollection instance = new BallCollection();
 
-    static BallCollection()
-    {
-    }
 
-    private BallCollection()
+    public BallCollection()
     {
         Balls = new List<Snowball2>();
         BallsConnectedToGround = new List<Snowball2>();
     }
 
-    public static BallCollection Instance
+
+    void Update()
     {
-        get
-        {
-            return instance;
-        }
+
+
+        HandleCollisions();
+
     }
-    #endregion
 
     public const float snowballMergeThresholdMultiplier = 0.2f;
 
@@ -76,7 +71,7 @@ public sealed class BallCollection
         }
         else
         {
-            return ball1;
+            return ball2;
         }
     }
 
@@ -168,19 +163,22 @@ public sealed class BallCollection
                             bool velocityIsHigh = thisBall.Rigidbody.velocity.magnitude > 6;
                             if (velocityIsHigh)
                             {
-                                Balls.Remove(otherBall);
-                                Object.Destroy(otherBall.gameObject);
+
+
+                                otherBall.Health--;
+
+                                if (otherBall.Health <= 0)
+                                {
+                                    Balls.Remove(otherBall);
+                                    Object.Destroy(otherBall.gameObject);
+                                }
+
                                 Balls.Remove(thisBall);
                                 Object.Destroy(thisBall.gameObject);
                             }
                             else
                             {
                                 thisBall.ConnectedBalls.Add(otherBall);
-
-                                if (thisBall.IsBall || otherBall.IsCover)
-                                {
-                                    thisBall.IsCover = true;
-                                }
                             }
                         }
                     }
@@ -188,10 +186,9 @@ public sealed class BallCollection
             }
         }
 
-
         for (int i = 0; i < BallsConnectedToGround.Count; i++)
         {
-            var ball = Balls[i];
+            var ball = BallsConnectedToGround[i];
             for (int j = 0; j < ball.ConnectedBalls.Count; j++)
             {
                 var connectedBall = ball.ConnectedBalls[j];
@@ -208,17 +205,14 @@ public sealed class BallCollection
         for (int i = 0; i < Balls.Count; i++)
         {
             var ball = Balls[i];
-
-            bool shouldFallDown = ball.IsCover && !ball.IsConnectedToGround;
-            if (shouldFallDown)
+            if (ball.IsConnectedToGround)
             {
-                ball.IsCover = false;
+                ball.UseGravity = false;
+            }
+            else
+            {
+                ball.UseGravity = true;
             }
         }
-
-
-
     }
-
-
 }

@@ -64,7 +64,7 @@ public class Hand : MonoBehaviour
     public bool BallsAreCloseToEachOther { get { return ballCollection.BallsAreCloseToEachOther; } }
 
 
-    BallCollection ballCollection = BallCollection.Instance;
+    public BallCollection ballCollection;
 
     private void Awake()
     {
@@ -131,6 +131,8 @@ public class Hand : MonoBehaviour
         Object.Destroy(handWhereBallWillBeDeleted.BallInHand.gameObject);
         handWhereBallWillBeDeleted.BallInHand = null;
         handWhereBallGoesTo.BallInHand.IncreaseScale();
+        handWhereBallGoesTo.BallInHand.Health+=0.1f;
+
     }
 
     private void ThrowBall()
@@ -163,6 +165,8 @@ public class Hand : MonoBehaviour
     {
         var go = GameObject.Instantiate(prefab);
         BallInHand = go.GetComponent<Snowball2>();
+        BallInHand.Health = 1;
+        ballInHand.ballCollection = ballCollection;
         BallInHand.IsHeldInHand = true;
 
     }
