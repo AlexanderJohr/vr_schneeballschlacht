@@ -22,7 +22,6 @@ public class Hand : MonoBehaviour
             {
                 ballInHand = value;
                 BallInHand.IsHeldInHand = true;
-                ballInHand.gameObject.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                 ballInHand.gameObject.transform.position = attachPoint.transform.position;
 
                 joint = ballInHand.gameObject.AddComponent<FixedJoint>();
@@ -82,15 +81,33 @@ public class Hand : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Snowball2 ballInGrabDistance = null;
+        for (int i = 0; i < ballCollection.Balls.Count; i++)
+        {
+            var ball = ballCollection.Balls[i];
+            Vector3 distanceToBallCenter = ball.transform.position - transform.position;
+            float ballRadius = ball.Scale / 2;
+
+            bool ballIsWithinGrabDistance = distanceToBallCenter.magnitude < ballRadius;
+
+            if (ballIsWithinGrabDistance) {
+                ballInGrabDistance = ball;
+            }
+        }
+
+
         if (IsNotHoldingBall && HoldInputPressed && HandIsInSnow)
         {
             CreateBallInHand();
+        }
+        else if (IsNotHoldingBall && HoldInputPressed && ballInGrabDistance != null)
+        {
+            GrabBall(ballInGrabDistance.gameObject);
         }
         else if (IsHoldingBall && HoldInputReleased)
         {
             ThrowBall();
         }
-
         if (BallsAreCloseToEachOther)
         {
             MergeBalls();
@@ -131,7 +148,7 @@ public class Hand : MonoBehaviour
         Object.Destroy(handWhereBallWillBeDeleted.BallInHand.gameObject);
         handWhereBallWillBeDeleted.BallInHand = null;
         handWhereBallGoesTo.BallInHand.IncreaseScale();
-        handWhereBallGoesTo.BallInHand.Health+=0.1f;
+        handWhereBallGoesTo.BallInHand.Health += 0.1f;
 
     }
 
@@ -164,10 +181,16 @@ public class Hand : MonoBehaviour
     private void CreateBallInHand()
     {
         var go = GameObject.Instantiate(prefab);
+        go.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         BallInHand = go.GetComponent<Snowball2>();
         BallInHand.Health = 1;
         ballInHand.ballCollection = ballCollection;
         BallInHand.IsHeldInHand = true;
+    }
 
+    private void GrabBall(GameObject ball)
+    {
+        BallInHand = ball.GetComponent<Snowball2>();
+        BallInHand.IsHeldInHand = true;
     }
 }
