@@ -85,6 +85,7 @@ public class Snowball2 : MonoBehaviour
 
     void Start()
     {
+        ballCollection = GameObject.Find("BallCollectionHi").GetComponent<BallCollection>();
         ballCollection.Balls.Add(this);
         Rigidbody = GetComponent<Rigidbody>();
     }
@@ -110,7 +111,7 @@ public class Snowball2 : MonoBehaviour
     void Update()
     {
 
-
+        //Rigidbody.velocity = new Vector3(10, 0, 10);
         //HandleCollisions();
 
     }
