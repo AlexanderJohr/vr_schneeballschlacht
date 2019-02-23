@@ -15,6 +15,7 @@ public class NetworkPlayer : Photon.MonoBehaviour {
 
     GameObject leftHandVR;
     GameObject rightHandVR;
+    GameObject head;
 
     // Use this for initialization
     void Start () {
@@ -22,7 +23,7 @@ public class NetworkPlayer : Photon.MonoBehaviour {
         photonView = GetComponent<PhotonView>();
         leftHandVR = GameObject.Find("Player/Controller (left)");
         rightHandVR = GameObject.Find("Player/Controller (right)");
-
+        head = GameObject.Find("Player/Camera");
     }
 	
 	// Update is called once per frame
@@ -41,8 +42,8 @@ public class NetworkPlayer : Photon.MonoBehaviour {
             }
 
 
-            playerAvatar.transform.position = SteamVR_Render.Top().transform.position;
-            playerAvatar.transform.rotation = SteamVR_Render.Top().transform.rotation;
+            playerAvatar.transform.position = head.transform.position;
+            playerAvatar.transform.rotation = head.transform.rotation;
 
             leftHandAvatar.transform.position = leftHandVR.transform.position;
             leftHandAvatar.transform.rotation = leftHandVR.transform.rotation;

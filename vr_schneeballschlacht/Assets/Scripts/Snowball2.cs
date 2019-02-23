@@ -85,7 +85,7 @@ public class Snowball2 : MonoBehaviour
 
     void Start()
     {
-        ballCollection = GameObject.Find("BallCollectionHi").GetComponent<BallCollection>();
+    //    ballCollection = GameObject.Find("BallCollectionHi").GetComponent<BallCollection>();
         ballCollection.Balls.Add(this);
         Rigidbody = GetComponent<Rigidbody>();
     }
