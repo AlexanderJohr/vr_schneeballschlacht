@@ -2,7 +2,7 @@
 
 public class OpenRoomCanvas : MonoBehaviour {
 
-		private int selectedLevel = 2;
+		private int selectedLevel = 3;
 
 		public void OnClickStartLevel()
 		{

@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/NetworkLevelVR.unity
     guid: 78818b6790ba0204eb0a16edeef8daeb
+  - enabled: 1
+    path: Assets/Scenes/New Scene.unity
+    guid: 9f8935999684fa542b1e01e403dcd7ad
   m_configObjects: {}

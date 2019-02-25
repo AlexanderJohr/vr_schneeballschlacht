@@ -78,7 +78,8 @@ public class ManagementForScene : MonoBehaviour {
     private void RPC_CreatePlayer()
     {
         Debug.Log("NetworkPlayer will createt");
-        PhotonNetwork.Instantiate("NetworkPlayer", Vector3.zero, Quaternion.identity, 0);
+        Vector3 position = GameObject.Find("Spawnpoint"+PhotonNetwork.player.ID).transform.position;
+        PhotonNetwork.Instantiate("NetworkPlayer_Avatar", position, Quaternion.identity, 0);
     }
 
 }

@@ -24,6 +24,10 @@ public class NetworkPlayer : Photon.MonoBehaviour {
         leftHandVR = GameObject.Find("Player/Controller (left)");
         rightHandVR = GameObject.Find("Player/Controller (right)");
         head = GameObject.Find("Player/Camera");
+
+        rightHandVR.transform.position = rightHandAvatar.transform.position;
+        leftHandVR.transform.position = leftHandAvatar.transform.position;
+        head.transform.position = playerAvatar.transform.position;
     }
 	
 	// Update is called once per frame
@@ -49,7 +53,7 @@ public class NetworkPlayer : Photon.MonoBehaviour {
             leftHandAvatar.transform.rotation = leftHandVR.transform.rotation;
 
             rightHandAvatar.transform.position = rightHandVR.transform.position;
-            rightHandAvatar.transform.rotation = rightHandVR.transform.rotation;
+            rightHandAvatar.transform.rotation = rightHandVR.transform.rotation; 
         }
     }
 }
