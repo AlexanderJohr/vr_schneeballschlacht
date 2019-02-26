@@ -39,6 +39,30 @@ public class UnetNetworkPlayer : NetworkBehaviour
             if (XRSettings.enabled)
             {
                 vrPlayArea.SetActive(true);
+
+                foreach (Transform child in playerAvatar.transform)
+                {
+                    MeshRenderer renderer = child.gameObject.GetComponent<MeshRenderer>();
+                    if (renderer != null) {
+                        renderer.enabled = false;
+                    }
+                }
+                foreach (Transform child in leftHandAvatar.transform)
+                {
+                    SkinnedMeshRenderer renderer = child.gameObject.GetComponent<SkinnedMeshRenderer>();
+                    if (renderer != null)
+                    {
+                        renderer.enabled = false;
+                    }
+                }
+                foreach (Transform child in rightHandAvatar.transform)
+                {
+                    SkinnedMeshRenderer renderer = child.gameObject.GetComponent<SkinnedMeshRenderer>();
+                    if (renderer != null)
+                    {
+                        renderer.enabled = false;
+                    }
+                }
             }
             else
             {
