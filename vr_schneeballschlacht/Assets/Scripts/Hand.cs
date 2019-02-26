@@ -160,7 +160,6 @@ public class Hand : MonoBehaviour
     {
         var rigidbody = BallInHand.GetComponent<Rigidbody>();
 
-        BallInHand = null;
 
         // We should probably apply the offset between trackedObj.transform.position
         // and device.transform.pos to insert into the physics sim at the correct
@@ -182,6 +181,7 @@ public class Hand : MonoBehaviour
         rigidbody.maxAngularVelocity = rigidbody.angularVelocity.magnitude;
 
        player.SpawnBallOnOpponentsClient(BallInHand);
+        BallInHand = null;
 
     }
 

@@ -2718,7 +2718,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1865004528512498}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 11.730123, y: 5.940259e-17, z: -2.6752548}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4209057631187988}
@@ -3325,7 +3325,7 @@ MonoBehaviour:
   prefab: {fileID: 1071805942581418, guid: b821615e2d7242c40a97f00076bec0c7, type: 2}
   attachPoint: {fileID: 54446378081594592}
   spawn: {fileID: 11400000, guid: b719270d9326b5743a7c2802c2cc7f98, type: 2}
-  ballCollection: {fileID: 0}
+  player: {fileID: 114390796469111084}
 --- !u!114 &114447798968977972
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3406,7 +3406,7 @@ MonoBehaviour:
   prefab: {fileID: 1071805942581418, guid: b821615e2d7242c40a97f00076bec0c7, type: 2}
   attachPoint: {fileID: 54048277398596922}
   spawn: {fileID: 11400000, guid: b719270d9326b5743a7c2802c2cc7f98, type: 2}
-  ballCollection: {fileID: 0}
+  player: {fileID: 114390796469111084}
 --- !u!114 &114795796294450276
 MonoBehaviour:
   m_ObjectHideFlags: 1

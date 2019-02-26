@@ -495,9 +495,7 @@ public class UnetNetworkPlayer : NetworkBehaviour
 
             if (ball.Health < 0)
             {
-                Debug.Log(string.Format(
-    "ball.Health < 0;  ID {0}", ball.Id));
-
+                Debug.Log(string.Format("ball.Health < 0;  ID {0}", ball.Id));
                 CmdDeleteMySnowBall(ball.Id);
                 PlayersBalls.Remove(ball.Id);
                 Object.Destroy(ball.gameObject);
