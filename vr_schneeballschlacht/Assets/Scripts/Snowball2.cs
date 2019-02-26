@@ -112,7 +112,7 @@ public class Snowball2 : MonoBehaviour
 
     public void IncreaseScale()
     {
-        Scale += 0.05f;
+        Scale += 0.15f;
     }
 
     public void reset()

@@ -152,7 +152,7 @@ public class Hand : MonoBehaviour
         Object.Destroy(handWhereBallWillBeDeleted.BallInHand.gameObject);
         handWhereBallWillBeDeleted.BallInHand = null;
         handWhereBallGoesTo.BallInHand.IncreaseScale();
-        handWhereBallGoesTo.BallInHand.Health += 0.1f;
+        handWhereBallGoesTo.BallInHand.Health += 0.3f;
 
     }
 

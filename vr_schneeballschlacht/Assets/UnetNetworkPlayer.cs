@@ -377,10 +377,11 @@ public class UnetNetworkPlayer : NetworkBehaviour
 
     private void HandleCollisions()
     {
+
         var myBalls = PlayersBalls.Select(d => d.Value).ToList();
         var opponentsBalls = OpponentsBalls.Select(d => d.Value).ToList();
         var allBalls = myBalls.Concat(opponentsBalls).ToList();
-
+                     
         BallsConnectedToGround.Clear();
         for (int i = 0; i < myBalls.Count; i++)
         {
@@ -517,7 +518,7 @@ public class UnetNetworkPlayer : NetworkBehaviour
                 }
             }
 
-            if (ball.Health < 0)
+            if (ball.Health < 0.1)
             {
                 Debug.Log(string.Format("ball.Health < 0;  ID {0}", ball.Id));
                 CmdDeleteMySnowBall(ball.Id);
