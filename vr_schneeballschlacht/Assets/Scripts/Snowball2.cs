@@ -8,9 +8,8 @@ public class Snowball2 : MonoBehaviour
     {
         ConnectedBalls = new List<Snowball2>();
     }
-
-    public BallCollection ballCollection;
-
+    public int Id;
+    public bool IsLocalBall;
     public bool isHeldInHand;
     public float health;
 
@@ -35,8 +34,20 @@ public class Snowball2 : MonoBehaviour
 
         }
     }
+    private Rigidbody _rigidbody;
 
-    public Rigidbody Rigidbody { get; private set; }
+    public Rigidbody Rigidbody
+    {
+        get
+        {
+            if (_rigidbody == null)
+            {
+                _rigidbody = GetComponent<Rigidbody>();
+            }
+
+            return _rigidbody;
+        }
+    }
     public float Scale
     {
         get
@@ -75,7 +86,8 @@ public class Snowball2 : MonoBehaviour
         }
         set
         {
-            if (value < health) {
+            if (value < health)
+            {
                 Darken(0.1f);
 
             }
@@ -83,12 +95,7 @@ public class Snowball2 : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        //ballCollection = GameObject.Find("BallCollection").GetComponent<BallCollection>();
-        ballCollection.Balls.Add(this);
-        Rigidbody = GetComponent<Rigidbody>();
-    }
+
     Material material;
 
     void Awake()
@@ -107,84 +114,6 @@ public class Snowball2 : MonoBehaviour
     {
         Scale += 0.05f;
     }
-
-    void Update()
-    {
-
-        //Rigidbody.velocity = new Vector3(10, 0, 10);
-        //HandleCollisions();
-
-    }
-    //private void HandleCollisions()
-    //{
-    //    float distanceOfCenterToGround = this.transform.position.y - 0.2f;
-
-    //    float ballRadius = this.Scale / 2;
-
-    //    float mergeWithFloorThreshold = ballRadius * BallCollection.snowballMergeThresholdMultiplier;
-
-    //    float snowballMergeRadius = ballRadius - mergeWithFloorThreshold;
-    //    float distanceOfMergeRadiusToGround = distanceOfCenterToGround - snowballMergeRadius;
-
-    //    bool isCloseToFloor = distanceOfMergeRadiusToGround < 0;
-
-    //    if (this.IsBall && IsNotHeldInHand && isCloseToFloor)
-    //    {
-    //        this.IsCover = true;
-    //        return;
-    //    }
-
-    //    bool isAtLeastCloseToOneOtherBall = false;
-    //    for (int i = 0; i < ballCollection.Balls.Count; i++)
-    //    {
-
-    //        var otherBall = ballCollection.Balls[i];
-    //        var isntThisBall = this != otherBall;
-
-    //        if (isntThisBall)
-    //        {
-
-    //            bool ballsAreNotHeldInHand = this.IsNotHeldInHand && otherBall.IsNotHeldInHand;
-
-    //            if (ballsAreNotHeldInHand)
-    //            {
-    //                bool ballsAreCloseToEachOther = BallCollection.checkIfBallsAreCloseToEachOther(this, otherBall);
-    //                if (ballsAreCloseToEachOther)
-    //                {
-    //                    isAtLeastCloseToOneOtherBall = true;
-
-    //                    bool velocityIsHigh = this.Rigidbody.velocity.magnitude > 6;
-    //                    if (velocityIsHigh)
-    //                    {
-    //                        ballCollection.Balls.Remove(otherBall);
-    //                        Object.Destroy(otherBall.gameObject);
-    //                        ballCollection.Balls.Remove(this);
-    //                        Object.Destroy(this.gameObject);
-    //                    }
-    //                    else
-    //                    {
-    //                        if (this.IsBall || otherBall.IsCover)
-    //                        {
-    //                            this.IsCover = true;
-    //                            break;
-    //                        }
-    //                        else if (this.IsCover || otherBall.IsCover)
-    //                        {
-    //                            break;
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-
-    //    bool isNotCloseToAnyOtherBall = !isAtLeastCloseToOneOtherBall;
-    //    bool isNotCloseToFloor = !isCloseToFloor;
-    //    bool shouldFallDown = this.IsCover && isNotCloseToAnyOtherBall && isNotCloseToFloor;
-    //    if (shouldFallDown) {
-    //        this.IsCover = false;
-    //    }
-    //}
 
     public void reset()
     {

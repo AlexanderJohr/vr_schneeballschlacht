@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using Valve.VR;
+using System.Linq;
 
 [RequireComponent(typeof(SteamVR_TrackedObject))]
 public class Hand : MonoBehaviour
@@ -60,31 +61,33 @@ public class Hand : MonoBehaviour
     public bool ThisIsTheLeftHand { get { return trackedObj.inputSource == SteamVR_Input_Sources.LeftHand; } }
     public bool ThisIsTheRightHand { get { return trackedObj.inputSource == SteamVR_Input_Sources.RightHand; } }
 
-    public bool BallsAreCloseToEachOther { get { return ballCollection.BallsAreCloseToEachOther; } }
+    public bool BallsAreCloseToEachOther { get { return player.BallsAreCloseToEachOther; } }
 
 
-    public BallCollection ballCollection;
+    public UnetNetworkPlayer player;
 
     private void Awake()
     {
         trackedObj = GetComponent<SteamVR_Behaviour_Pose>();
         if (ThisIsTheLeftHand)
         {
-            ballCollection.LeftHand = this;
+            player.LeftHand = this;
         }
         else if (ThisIsTheRightHand)
         {
-            ballCollection.RightHand = this;
+            player.RightHand = this;
         }
 
     }
 
     private void FixedUpdate()
     {
+        var balls = player.PlayersBalls.Select(d => d.Value).ToList();
+
         Snowball2 ballInGrabDistance = null;
-        for (int i = 0; i < ballCollection.Balls.Count; i++)
+        for (int i = 0; i < balls.Count; i++)
         {
-            var ball = ballCollection.Balls[i];
+            var ball = balls[i];
             Vector3 distanceToBallCenter = ball.transform.position - transform.position;
             float ballRadius = ball.Scale / 2;
 
@@ -119,32 +122,33 @@ public class Hand : MonoBehaviour
         Hand handWhereBallGoesTo;
         Hand handWhereBallWillBeDeleted;
 
-        if (ballCollection.OneBallInHandIsBigger)
+        if (player.OneBallInHandIsBigger)
         {
-            handWhereBallWillBeDeleted = ballCollection.HandWithSmalestBall;
-            handWhereBallGoesTo = ballCollection.HandWithBiggestBall;
+            handWhereBallWillBeDeleted = player.HandWithSmalestBall;
+            handWhereBallGoesTo = player.HandWithBiggestBall;
         }
         else
         {
             var origin = trackedObj.origin ? trackedObj.origin : trackedObj.transform.parent;
 
-            float leftBallVelocity = origin.TransformVector(ballCollection.LeftHand.trackedObj.GetVelocity()).magnitude;
-            float rightBallVelocity = origin.TransformVector(ballCollection.RightHand.trackedObj.GetVelocity()).magnitude;
+            float leftBallVelocity = origin.TransformVector(player.LeftHand.trackedObj.GetVelocity()).magnitude;
+            float rightBallVelocity = origin.TransformVector(player.RightHand.trackedObj.GetVelocity()).magnitude;
 
             if (leftBallVelocity > rightBallVelocity)
             {
-                handWhereBallWillBeDeleted = ballCollection.LeftHand;
-                handWhereBallGoesTo = ballCollection.RightHand;
+                handWhereBallWillBeDeleted = player.LeftHand;
+                handWhereBallGoesTo = player.RightHand;
             }
             else
             {
 
-                handWhereBallWillBeDeleted = ballCollection.RightHand;
-                handWhereBallGoesTo = ballCollection.LeftHand;
+                handWhereBallWillBeDeleted = player.RightHand;
+                handWhereBallGoesTo = player.LeftHand;
             }
         }
 
-        ballCollection.Balls.Remove(handWhereBallWillBeDeleted.BallInHand);
+        player.PlayersBalls.Remove(handWhereBallWillBeDeleted.BallInHand.Id);
+
         Object.Destroy(handWhereBallWillBeDeleted.BallInHand.gameObject);
         handWhereBallWillBeDeleted.BallInHand = null;
         handWhereBallGoesTo.BallInHand.IncreaseScale();
@@ -176,6 +180,9 @@ public class Hand : MonoBehaviour
         }
 
         rigidbody.maxAngularVelocity = rigidbody.angularVelocity.magnitude;
+
+       player.SpawnBallOnOpponentsClient(BallInHand);
+
     }
 
     private void CreateBallInHand()
@@ -183,8 +190,8 @@ public class Hand : MonoBehaviour
         var go = GameObject.Instantiate(prefab);
         go.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         BallInHand = go.GetComponent<Snowball2>();
+        BallInHand.IsLocalBall = false;
         BallInHand.Health = 1;
-        ballInHand.ballCollection = ballCollection;
         BallInHand.IsHeldInHand = true;
     }
 
@@ -192,5 +199,6 @@ public class Hand : MonoBehaviour
     {
         BallInHand = ball.GetComponent<Snowball2>();
         BallInHand.IsHeldInHand = true;
+        player.CmdDeleteMySnowBall(BallInHand.Id);
     }
 }
