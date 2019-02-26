@@ -152,7 +152,7 @@ public class Hand : MonoBehaviour
         Object.Destroy(handWhereBallWillBeDeleted.BallInHand.gameObject);
         handWhereBallWillBeDeleted.BallInHand = null;
         handWhereBallGoesTo.BallInHand.IncreaseScale();
-        handWhereBallGoesTo.BallInHand.Health += 0.3f;
+        handWhereBallGoesTo.BallInHand.Health += 0.4f;
 
     }
 
@@ -165,16 +165,16 @@ public class Hand : MonoBehaviour
         // and device.transform.pos to insert into the physics sim at the correct
         // location, however, we would then want to predict ahead the visual representation
         // by the same amount we are predicting our render poses.
-
+        
         var origin = trackedObj.origin ? trackedObj.origin : trackedObj.transform.parent;
         if (origin != null)
         {
-            rigidbody.velocity = origin.TransformVector(trackedObj.GetVelocity());
+            rigidbody.velocity = origin.TransformVector(trackedObj.GetVelocity() / (BallInHand.Scale * 5));
             rigidbody.angularVelocity = origin.TransformVector(trackedObj.GetAngularVelocity());
         }
         else
         {
-            rigidbody.velocity = trackedObj.GetVelocity();
+            rigidbody.velocity = trackedObj.GetVelocity() / (BallInHand.Scale * 5);
             rigidbody.angularVelocity = trackedObj.GetAngularVelocity();
         }
 
@@ -190,7 +190,7 @@ public class Hand : MonoBehaviour
         var go = GameObject.Instantiate(prefab);
         go.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         BallInHand = go.GetComponent<Snowball2>();
-        BallInHand.IsLocalBall = false;
+        BallInHand.IsLocalBall = true;
         BallInHand.Health = 1;
         BallInHand.IsHeldInHand = true;
     }
