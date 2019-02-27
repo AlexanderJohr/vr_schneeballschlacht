@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 3f63e944a395f8349abba210eef1a64f
+guid: 132096f2d9474804c8148ebb34470d4b
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -114,7 +114,7 @@ ModelImporter:
       name: Armature|ArmatureAction
       takeName: Armature|ArmatureAction
       firstFrame: 0
-      lastFrame: 36
+      lastFrame: 23
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
