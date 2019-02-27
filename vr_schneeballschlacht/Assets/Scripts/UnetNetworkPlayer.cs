@@ -31,6 +31,7 @@ public class UnetNetworkPlayer : NetworkBehaviour
 
     void Start()
     {
+        ballDatabase.Reset();
         BallsConnectedToGround = new List<Snowball2>();
 
 

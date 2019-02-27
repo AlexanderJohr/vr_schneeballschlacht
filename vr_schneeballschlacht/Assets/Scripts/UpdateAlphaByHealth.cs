@@ -7,7 +7,7 @@ public class UpdateAlphaByHealth : MonoBehaviour {
     Renderer rend;
 
     void Start () {
-        Renderer rend = GetComponent<Renderer>();
+        rend = GetComponent<Renderer>();
     }
 	
 	void Update () {
