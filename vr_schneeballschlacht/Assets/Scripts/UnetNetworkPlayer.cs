@@ -31,12 +31,13 @@ public class UnetNetworkPlayer : NetworkBehaviour
 
     void Start()
     {
-        ballDatabase.Reset();
         BallsConnectedToGround = new List<Snowball2>();
 
 
         if (isLocalPlayer)
         {
+            ballDatabase.Reset();
+
             if (XRSettings.enabled)
             {
                 vrPlayArea.SetActive(true);
