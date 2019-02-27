@@ -84,6 +84,10 @@ public class UnetNetworkPlayer : NetworkBehaviour
             {
                 ballDatabase.Health += Time.deltaTime * healtReplenishMultiplier;
             }
+            if (ballDatabase.Health > 1)
+            {
+                ballDatabase.Health = 1;
+            }
 
             if (XRSettings.enabled)
             {
