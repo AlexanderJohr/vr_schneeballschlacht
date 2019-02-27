@@ -28,6 +28,7 @@ public class UnetNetworkPlayer : NetworkBehaviour
     public GameObject rightHandVR;
     public GameObject head;
 
+    public float healtReplenishMultiplier = 1.0f;
 
     void Start()
     {
@@ -37,6 +38,11 @@ public class UnetNetworkPlayer : NetworkBehaviour
         if (isLocalPlayer)
         {
             ballDatabase.Reset();
+
+            if (ballDatabase.Health > 0)
+            {
+                ballDatabase.Health += Time.deltaTime * healtReplenishMultiplier;
+            }
 
             if (XRSettings.enabled)
             {
@@ -559,7 +565,7 @@ public class UnetNetworkPlayer : NetworkBehaviour
 
             if (opponentsBall.UseGravity) {
                 Vector3 distanceBetweenBallAndHead = opponentsBall.transform.position - head.transform.position;
-                if(distanceBetweenBallAndHead.magnitude < 1f)
+                if(distanceBetweenBallAndHead.magnitude < 0.5f)
                 {
                     ballDatabase.Health -= 0.2f;
                     CmdDeleteOpponentsSnowBall(opponentsBall.Id);
