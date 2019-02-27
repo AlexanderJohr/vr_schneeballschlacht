@@ -250,6 +250,30 @@ public class UnetNetworkPlayer : NetworkBehaviour
     }
 
     [Command]
+    public void CmdDeleteOpponentsSnowBall(int id)
+    {
+        RpcDeleteOpponentsSnowBall(id);
+    }
+    [ClientRpc]
+    public void RpcDeleteOpponentsSnowBall(int id)
+    {
+        if (!isLocalPlayer)
+        {
+            if (ballDatabase.PlayersBalls.ContainsKey(id))
+            {
+                Snowball2 ball = ballDatabase.PlayersBalls[id];
+                GameObject.Destroy(ball.gameObject);
+                ballDatabase.PlayersBalls.Remove(id);
+            }
+            else
+            {
+                Debug.Log(string.Format(
+                    "RpcDeleteOpponentsSnowBall PlayersBalls did not contain the Key {0}", id));
+            }
+        }
+    }
+
+    [Command]
     public void CmdDeleteMySnowBall(int id)
     {
         RpcDeleteSnowBall(id);
@@ -526,6 +550,23 @@ public class UnetNetworkPlayer : NetworkBehaviour
                 Object.Destroy(ball.gameObject);
             }
         }
+
+        for (int j = 0; j < opponentsBalls.Count; j++)
+        {
+            var opponentsBall = opponentsBalls[j];
+
+            if (opponentsBall.UseGravity) {
+                Vector3 distanceBetweenBallAndHead = opponentsBall.transform.position - head.transform.position;
+                if(distanceBetweenBallAndHead.magnitude < 1f)
+                {
+                    ballDatabase.Health -= 0.2f;
+                    CmdDeleteOpponentsSnowBall(opponentsBall.Id);
+                    OpponentsBalls.Remove(opponentsBall.Id);
+                    Object.Destroy(opponentsBall.gameObject);
+                }
+            }
+        }
+
     }
 
     #endregion

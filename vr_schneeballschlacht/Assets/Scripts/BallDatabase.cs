@@ -7,7 +7,7 @@ public class BallDatabase : ScriptableObject
 {
     public int SnowBallIndex { get; set; }
 
-    public int Health { get; set; }
+    public float Health { get; set; }
 
     //public float Score = 0;
 
@@ -34,7 +34,7 @@ public class BallDatabase : ScriptableObject
         PlayersBalls = new Dictionary<int, Snowball2>();
         OpponentsBalls = new Dictionary<int, Snowball2>();
 
-        Health = 100;
+        Health = 1f;
 
         SnowBallIndex = 0;
     }
