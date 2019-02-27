@@ -39,11 +39,6 @@ public class UnetNetworkPlayer : NetworkBehaviour
         {
             ballDatabase.Reset();
 
-            if (ballDatabase.Health > 0)
-            {
-                ballDatabase.Health += Time.deltaTime * healtReplenishMultiplier;
-            }
-
             if (XRSettings.enabled)
             {
                 vrPlayArea.SetActive(true);
@@ -85,6 +80,11 @@ public class UnetNetworkPlayer : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
+            if (ballDatabase.Health > 0)
+            {
+                ballDatabase.Health += Time.deltaTime * healtReplenishMultiplier;
+            }
+
             if (XRSettings.enabled)
             {
                 HandleVrInput();
