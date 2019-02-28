@@ -11,3 +11,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2db19abad24e3a47b73e4cf41465127, type: 3}
   m_Name: Ball Database
   m_EditorClassIdentifier: 
+  Health: 1

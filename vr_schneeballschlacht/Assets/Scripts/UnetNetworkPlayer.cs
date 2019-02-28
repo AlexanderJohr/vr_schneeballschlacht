@@ -74,10 +74,16 @@ public class UnetNetworkPlayer : NetworkBehaviour
         }
     }
 
+    public AudioSource lastBreath;
+    public AudioSource medicalHeart;
+    public AudioSource hitOnTheHead;
 
+    bool lastBreathPlayed = false;
 
     void Update()
     {
+        
+
         if (isLocalPlayer)
         {
             if (ballDatabase.Health > 0)
@@ -86,8 +92,26 @@ public class UnetNetworkPlayer : NetworkBehaviour
             }
             if (ballDatabase.Health > 1)
             {
+
                 ballDatabase.Health = 1;
             }
+            if (ballDatabase.Health <= 0 && !lastBreathPlayed)
+            {
+                lastBreathPlayed = true;
+                lastBreath.Play();
+                medicalHeart.Stop();
+            }
+
+            if (ballDatabase.Health <= 0.5)
+            {
+                medicalHeart.volume = 1 - (ballDatabase.Health * 2);
+            }
+            else
+            {
+                medicalHeart.volume = 0f;
+
+            }
+
 
             if (XRSettings.enabled)
             {
@@ -571,10 +595,12 @@ public class UnetNetworkPlayer : NetworkBehaviour
                 Vector3 distanceBetweenBallAndHead = opponentsBall.transform.position - head.transform.position;
                 if(distanceBetweenBallAndHead.magnitude < 0.5f)
                 {
+                    hitOnTheHead.Play();
                     ballDatabase.Health -= 0.2f;
                     CmdDeleteOpponentsSnowBall(opponentsBall.Id);
                     OpponentsBalls.Remove(opponentsBall.Id);
                     Object.Destroy(opponentsBall.gameObject);
+                    
                 }
             }
         }

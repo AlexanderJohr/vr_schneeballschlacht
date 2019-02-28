@@ -7,7 +7,7 @@ public class BallDatabase : ScriptableObject
 {
     public int SnowBallIndex { get; set; }
 
-    public float Health { get; set; }
+    public float Health;
 
     //public float Score = 0;
 

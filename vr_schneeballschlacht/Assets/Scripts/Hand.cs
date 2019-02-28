@@ -116,6 +116,7 @@ public class Hand : MonoBehaviour
             MergeBalls();
         }
     }
+    public AudioSource[] snowballCrunchSounds;
 
     private void MergeBalls()
     {
@@ -153,6 +154,10 @@ public class Hand : MonoBehaviour
         handWhereBallWillBeDeleted.BallInHand = null;
         handWhereBallGoesTo.BallInHand.IncreaseScale();
         handWhereBallGoesTo.BallInHand.Health += 0.4f;
+
+
+        AudioSource snowballCrunchSound = snowballCrunchSounds[Random.Range(0, snowballCrunchSounds.Length)];
+        snowballCrunchSound.Play();
 
     }
 
@@ -200,5 +205,8 @@ public class Hand : MonoBehaviour
         BallInHand = ball.GetComponent<Snowball2>();
         BallInHand.IsHeldInHand = true;
         player.CmdDeleteMySnowBall(BallInHand.Id);
+
+        AudioSource snowballCrunchSound = snowballCrunchSounds[Random.Range(0, snowballCrunchSounds.Length)];
+        snowballCrunchSound.Play();
     }
 }
