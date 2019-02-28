@@ -165,7 +165,6 @@ public class Hand : MonoBehaviour
 
     private void ThrowBall()
     {
-        throwSound.Play();
         var rigidbody = BallInHand.GetComponent<Rigidbody>();
 
 
@@ -185,7 +184,11 @@ public class Hand : MonoBehaviour
             rigidbody.velocity = trackedObj.GetVelocity() / (BallInHand.Scale * 5);
             rigidbody.angularVelocity = trackedObj.GetAngularVelocity();
         }
+        bool velocityIsHigh = rigidbody.velocity.magnitude > 6;
+        if (velocityIsHigh) {
 
+            throwSound.Play();
+        }
         rigidbody.maxAngularVelocity = rigidbody.angularVelocity.magnitude;
 
        player.SpawnBallOnOpponentsClient(BallInHand);
