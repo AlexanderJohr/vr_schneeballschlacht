@@ -77,6 +77,8 @@ public class UnetNetworkPlayer : NetworkBehaviour
     public AudioSource lastBreath;
     public AudioSource medicalHeart;
     public AudioSource hitOnTheHead;
+    public AudioSource[] splatSounds;
+
 
     bool lastBreathPlayed = false;
 
@@ -503,6 +505,8 @@ public class UnetNetworkPlayer : NetworkBehaviour
                                         PlayersBalls.Remove(otherBall.Id);
                                         CmdDeleteMySnowBall(otherBall.Id);
                                         Object.Destroy(otherBall.gameObject);
+                                        AudioSource splatSound = splatSounds[Random.Range(0, splatSounds.Length)];
+                                        splatSound.Play();
                                     }
 
                                     CmdDeleteMySnowBall(thisBall.Id);
@@ -584,6 +588,8 @@ public class UnetNetworkPlayer : NetworkBehaviour
                 CmdDeleteMySnowBall(ball.Id);
                 PlayersBalls.Remove(ball.Id);
                 Object.Destroy(ball.gameObject);
+                AudioSource splatSound = splatSounds[Random.Range(0, splatSounds.Length)];
+                splatSound.Play();
             }
         }
 

@@ -117,6 +117,8 @@ public class Hand : MonoBehaviour
         }
     }
     public AudioSource[] snowballCrunchSounds;
+    public AudioSource throwSound;
+
 
     private void MergeBalls()
     {
@@ -163,6 +165,7 @@ public class Hand : MonoBehaviour
 
     private void ThrowBall()
     {
+        throwSound.Play();
         var rigidbody = BallInHand.GetComponent<Rigidbody>();
 
 
@@ -198,6 +201,10 @@ public class Hand : MonoBehaviour
         BallInHand.IsLocalBall = true;
         BallInHand.Health = 1;
         BallInHand.IsHeldInHand = true;
+
+
+        AudioSource snowballCrunchSound = snowballCrunchSounds[Random.Range(0, snowballCrunchSounds.Length)];
+        snowballCrunchSound.Play();
     }
 
     private void GrabBall(GameObject ball)
