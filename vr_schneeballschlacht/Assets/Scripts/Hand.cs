@@ -88,6 +88,7 @@ public class Hand : MonoBehaviour
         for (int i = 0; i < balls.Count; i++)
         {
             var ball = balls[i];
+            if (ball != null) {
             Vector3 distanceToBallCenter = ball.transform.position - transform.position;
             float ballRadius = ball.Scale / 2;
 
@@ -96,6 +97,8 @@ public class Hand : MonoBehaviour
             if (ballIsWithinGrabDistance) {
                 ballInGrabDistance = ball;
             }
+            }
+
         }
 
 
@@ -186,7 +189,6 @@ public class Hand : MonoBehaviour
         }
         bool velocityIsHigh = rigidbody.velocity.magnitude > 6;
         if (velocityIsHigh) {
-
             throwSound.Play();
         }
         rigidbody.maxAngularVelocity = rigidbody.angularVelocity.magnitude;

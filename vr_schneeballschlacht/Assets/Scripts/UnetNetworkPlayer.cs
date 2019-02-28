@@ -448,156 +448,168 @@ public class UnetNetworkPlayer : NetworkBehaviour
         for (int i = 0; i < myBalls.Count; i++)
         {
             var ball = myBalls[i];
-
-            ball.reset();
-
-            float distanceOfCenterToGround = ball.transform.position.y - 0.2f;
-
-            float ballRadius = ball.Scale / 2;
-
-            float mergeWithFloorThreshold = ballRadius * snowballMergeThresholdMultiplier;
-
-            float snowballMergeRadius = ballRadius - mergeWithFloorThreshold;
-            float distanceOfMergeRadiusToGround = distanceOfCenterToGround - snowballMergeRadius;
-
-            bool isCloseToFloor = distanceOfMergeRadiusToGround < 0;
-
-            if (isCloseToFloor)
+            if (ball != null)
             {
-                ball.IsConnectedToGround = true;
-                BallsConnectedToGround.Add(ball);
-            }
-            else
-            {
-                ball.IsConnectedToGround = false;
-            }
 
-            for (int j = 0; j < allBalls.Count; j++)
-            {
-                var otherBall = allBalls[j];
-                var thisBall = ball;
+                ball.reset();
 
-                var thisBallIsntOtherBall = thisBall != otherBall;
+                float distanceOfCenterToGround = ball.transform.position.y - 0.2f;
 
-                if (thisBallIsntOtherBall)
+                float ballRadius = ball.Scale / 2;
+
+                float mergeWithFloorThreshold = ballRadius * snowballMergeThresholdMultiplier;
+
+                float snowballMergeRadius = ballRadius - mergeWithFloorThreshold;
+                float distanceOfMergeRadiusToGround = distanceOfCenterToGround - snowballMergeRadius;
+
+                bool isCloseToFloor = distanceOfMergeRadiusToGround < 0;
+
+                if (isCloseToFloor)
                 {
+                    ball.IsConnectedToGround = true;
+                    BallsConnectedToGround.Add(ball);
+                }
+                else
+                {
+                    ball.IsConnectedToGround = false;
+                }
 
-                    bool ballsAreNotHeldInHand = thisBall.IsNotHeldInHand && otherBall.IsNotHeldInHand;
+                for (int j = 0; j < allBalls.Count; j++)
+                {
+                    var otherBall = allBalls[j];
+                    var thisBall = ball;
+                    if (otherBall != null && thisBall != null) {
 
-                    if (ballsAreNotHeldInHand)
-                    {
-                        bool ballsAreCloseToEachOther = checkIfBallsAreCloseToEachOther(thisBall, otherBall);
-                        if (ballsAreCloseToEachOther)
+                        var thisBallIsntOtherBall = thisBall != otherBall;
+
+                        if (thisBallIsntOtherBall)
                         {
-                            bool hitMyBall = otherBall.IsLocalBall;
-                            bool hitOpponentsBall = !otherBall.IsLocalBall;
 
-                            if (hitMyBall)
+                            bool ballsAreNotHeldInHand = thisBall.IsNotHeldInHand && otherBall.IsNotHeldInHand;
+
+                            if (ballsAreNotHeldInHand)
                             {
-                                bool velocityIsHigh = thisBall.Rigidbody.velocity.magnitude > 6;
-                                if (velocityIsHigh)
+                                bool ballsAreCloseToEachOther = checkIfBallsAreCloseToEachOther(thisBall, otherBall);
+                                if (ballsAreCloseToEachOther)
                                 {
+                                    bool hitMyBall = otherBall.IsLocalBall;
+                                    bool hitOpponentsBall = !otherBall.IsLocalBall;
 
-                                    otherBall.Health--;
-
-                                    if (otherBall.Health <= 0)
+                                    if (hitMyBall)
                                     {
-                                        PlayersBalls.Remove(otherBall.Id);
-                                        CmdDeleteMySnowBall(otherBall.Id);
-                                        Object.Destroy(otherBall.gameObject);
-                                        AudioSource splatSound = splatSounds[Random.Range(0, splatSounds.Length)];
-                                        splatSound.Play();
+                                        bool velocityIsHigh = thisBall.Rigidbody.velocity.magnitude > 6;
+                                        if (velocityIsHigh)
+                                        {
+
+                                            otherBall.Health--;
+
+                                            if (otherBall.Health <= 0)
+                                            {
+                                                PlayersBalls.Remove(otherBall.Id);
+                                                CmdDeleteMySnowBall(otherBall.Id);
+                                                Object.Destroy(otherBall.gameObject);
+                                                AudioSource splatSound = splatSounds[Random.Range(0, splatSounds.Length)];
+                                                splatSound.Play();
+                                            }
+
+                                            CmdDeleteMySnowBall(thisBall.Id);
+                                            PlayersBalls.Remove(thisBall.Id);
+                                            Object.Destroy(thisBall.gameObject);
+                                        }
+                                        else
+                                        {
+                                            thisBall.ConnectedBalls.Add(otherBall);
+                                        }
+                                    }
+                                    else if (hitOpponentsBall)
+                                    {
+                                        bool thisBallWasTheMovingOne = thisBall.UseGravity;
+                                        if (thisBallWasTheMovingOne)
+                                        {
+                                            bool otherBallWasCover = !otherBall.UseGravity;
+
+                                            if (otherBallWasCover)
+                                            {
+                                                otherBall.Health--;
+                                                CmdDecreaseHealthOfOpponentsSnowBall(otherBall.Id);
+                                            }
+                                            CmdDeleteMySnowBall(thisBall.Id);
+                                            PlayersBalls.Remove(thisBall.Id);
+                                            Object.Destroy(thisBall.gameObject);
+                                        }
+                                        //  OpponentsBalls.Remove(otherBall.Id);
+                                        // CmdDeleteMySnowBall(otherBall.Id);
                                     }
 
-                                    CmdDeleteMySnowBall(thisBall.Id);
-                                    PlayersBalls.Remove(thisBall.Id);
-                                    Object.Destroy(thisBall.gameObject);
-                                }
-                                else
-                                {
-                                    thisBall.ConnectedBalls.Add(otherBall);
+
+
                                 }
                             }
-                            else if (hitOpponentsBall)
-                            {
-                                bool thisBallWasTheMovingOne = thisBall.UseGravity;
-                                if (thisBallWasTheMovingOne)
-                                {
-                                    bool otherBallWasCover = !otherBall.UseGravity;
-
-                                    if (otherBallWasCover)
-                                    {
-                                        otherBall.Health--;
-                                        CmdDecreaseHealthOfOpponentsSnowBall(otherBall.Id);
-                                    }
-                                    CmdDeleteMySnowBall(thisBall.Id);
-                                    PlayersBalls.Remove(thisBall.Id);
-                                    Object.Destroy(thisBall.gameObject);
-                                }
-                                //  OpponentsBalls.Remove(otherBall.Id);
-                                // CmdDeleteMySnowBall(otherBall.Id);
-                            }
-
-
-
                         }
                     }
                 }
-            }
+            }            
         }
 
         for (int i = 0; i < BallsConnectedToGround.Count; i++)
         {
             var ball = BallsConnectedToGround[i];
-            for (int j = 0; j < ball.ConnectedBalls.Count; j++)
-            {
-                var connectedBall = ball.ConnectedBalls[j];
 
-                bool connectedBallNotYetChecket = !connectedBall.IsConnectedToGround;
-                if (connectedBallNotYetChecket)
+            if (ball != null) {
+                for (int j = 0; j < ball.ConnectedBalls.Count; j++)
                 {
-                    connectedBall.IsConnectedToGround = true;
-                    BallsConnectedToGround.Add(connectedBall);
+                    var connectedBall = ball.ConnectedBalls[j];
+
+                    bool connectedBallNotYetChecket = !connectedBall.IsConnectedToGround;
+                    if (connectedBallNotYetChecket)
+                    {
+                        connectedBall.IsConnectedToGround = true;
+                        BallsConnectedToGround.Add(connectedBall);
+                    }
                 }
-            }
+            }            
         }
 
         for (int i = 0; i < myBalls.Count; i++)
         {
             var ball = myBalls[i];
-            if (ball.IsConnectedToGround)
-            {
-                if (ball.UseGravity != false)
-                {
-                    ball.UseGravity = false;
-                    CmdUpdateMySnowBall(ball.Id, ball.transform.position, Vector3.zero, ball.UseGravity, ball.Scale, ball.Health);
-                }
-            }
-            else
-            {
-                if (ball.UseGravity != true)
-                {
-                    ball.UseGravity = true;
-                    CmdUpdateMySnowBall(ball.Id, ball.transform.position, ball.Rigidbody.velocity, ball.UseGravity, ball.Scale, ball.Health);
-                }
-            }
 
-            if (ball.Health < 0.1)
-            {
-                Debug.Log(string.Format("ball.Health < 0;  ID {0}", ball.Id));
-                CmdDeleteMySnowBall(ball.Id);
-                PlayersBalls.Remove(ball.Id);
-                Object.Destroy(ball.gameObject);
-                AudioSource splatSound = splatSounds[Random.Range(0, splatSounds.Length)];
-                splatSound.Play();
+            if (ball != null) {
+                if (ball.IsConnectedToGround)
+                {
+                    if (ball.UseGravity != false)
+                    {
+                        ball.UseGravity = false;
+                        CmdUpdateMySnowBall(ball.Id, ball.transform.position, Vector3.zero, ball.UseGravity, ball.Scale, ball.Health);
+                    }
+                }
+                else
+                {
+                    if (ball.UseGravity != true)
+                    {
+                        ball.UseGravity = true;
+                        CmdUpdateMySnowBall(ball.Id, ball.transform.position, ball.Rigidbody.velocity, ball.UseGravity, ball.Scale, ball.Health);
+                    }
+                }
+
+                if (ball.Health < 0.1)
+                {
+                    Debug.Log(string.Format("ball.Health < 0;  ID {0}", ball.Id));
+                    CmdDeleteMySnowBall(ball.Id);
+                    PlayersBalls.Remove(ball.Id);
+                    Object.Destroy(ball.gameObject);
+                    AudioSource splatSound = splatSounds[Random.Range(0, splatSounds.Length)];
+                    splatSound.Play();
+                }
             }
+            
         }
 
         for (int j = 0; j < opponentsBalls.Count; j++)
         {
             var opponentsBall = opponentsBalls[j];
 
-            if (opponentsBall.UseGravity) {
+            if (opponentsBall != null && opponentsBall.UseGravity) {
                 Vector3 distanceBetweenBallAndHead = opponentsBall.transform.position - head.transform.position;
                 if(distanceBetweenBallAndHead.magnitude < 0.5f)
                 {
