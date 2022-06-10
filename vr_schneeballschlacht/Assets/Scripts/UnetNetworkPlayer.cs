@@ -614,7 +614,7 @@ public class UnetNetworkPlayer : NetworkBehaviour
                 if(distanceBetweenBallAndHead.magnitude < 0.5f)
                 {
                     hitOnTheHead.Play();
-                    ballDatabase.Health -= 0.2f;
+                    ballDatabase.Health -= 0.35f;
                     CmdDeleteOpponentsSnowBall(opponentsBall.Id);
                     OpponentsBalls.Remove(opponentsBall.Id);
                     Object.Destroy(opponentsBall.gameObject);
